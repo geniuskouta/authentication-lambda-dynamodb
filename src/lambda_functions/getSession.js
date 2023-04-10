@@ -14,6 +14,16 @@ export const lambdaHandler = async (event) => {
     key,
   );
 
+  const response = {
+    statusCode: 200,
+    body: session,
+    headers: {
+      'Set-Cookie': `sessionId=${session.sessionId}; HttpOnly`,
+      'Access-Control-Allow-Origin': '*',
+      'Access-Control-Allow-Credentials': true,
+    },
+  };
+
   if (currentTime >= session.expires) {
     if (session.isActive) {
       // invalidate session if session is active and it is expired
@@ -29,9 +39,13 @@ export const lambdaHandler = async (event) => {
       );
 
       // return update session info
-      return { ...session, isActive: false };
+      response.body = {
+        ...session,
+        isActive: false,
+      };
+      return response;
     }
-    return session;
+    return response;
   }
 
   const newExpires = currentTime + 1000 * 60 * 60 * 24 * 14; // 14 days from now
@@ -48,5 +62,6 @@ export const lambdaHandler = async (event) => {
   );
 
   // return session info with new expiry date
-  return { ...session, expires: newExpires };
+  response.body = { ...session, expires: newExpires };
+  return response;
 };

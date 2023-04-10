@@ -9,5 +9,15 @@ export const lambdaHandler = async (event) => {
   const sessionInfo = new UserSession(event.id, event).generateSessionInfo();
   const dbClient = AWSDynamoDB.getInstance();
   await dbClient.putItem(TABLE_NAME, sessionInfo);
-  return sessionInfo;
+
+  const response = {
+    statusCode: 201,
+    body: sessionInfo,
+    headers: {
+      'Set-Cookie': `sessionId=${sessionInfo.sessionId}; HttpOnly`,
+      'Access-Control-Allow-Origin': '*',
+      'Access-Control-Allow-Credentials': true,
+    },
+  };
+  return response;
 };
