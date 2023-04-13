@@ -14,7 +14,7 @@ export const lambdaHandler = async (event) => {
     statusCode: 201,
     body: sessionInfo,
     headers: {
-      'Set-Cookie': `sessionId=${sessionInfo.sessionId}; HttpOnly`,
+      'Set-Cookie': `sessionId=${sessionInfo.sessionId}; Path=/; Domain=localhost; HttpOnly; SameSite=None; Secure`,
       'Access-Control-Allow-Origin': '*',
       'Access-Control-Allow-Credentials': true,
     },
